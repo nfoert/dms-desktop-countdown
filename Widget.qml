@@ -115,21 +115,27 @@ DesktopPluginComponent {
         }
 
         let total = 0;
-        let current = new Date(from);
 
-        while (current < to) {
-            let next = new Date(current);
-            next.setHours(current.getHours() + 1);
+        let current = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+        const endDay = new Date(to.getFullYear(), to.getMonth(), to.getDate());
 
-            // Clamp to end
-            if (next > to)
-                next = new Date(to);
-
+        while (current <= endDay) {
             if (shouldCountDay(current.getDay())) {
-                total += (next - current); // partial hour included
+                // start of this day
+                let dayStart = new Date(current);
+                let dayEnd = new Date(current);
+                dayEnd.setHours(23, 59, 59, 999);
+
+                // clamp to range
+                if (dayStart < from) dayStart = from;
+                if (dayEnd > to) dayEnd = to;
+
+                if (dayEnd > dayStart) {
+                    total += (dayEnd - dayStart);
+                }
             }
 
-            current = next;
+            current.setDate(current.getDate() + 1);
         }
 
         return total;
