@@ -117,6 +117,8 @@ DesktopPluginComponent {
     function prettyDate(string) {
         const date = parseDate(string);
 
+        if (!date) return null;
+
         return date.toLocaleDateString("en-US", {
             day: "numeric",
             month: "long",
