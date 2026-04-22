@@ -275,6 +275,12 @@ DesktopPluginComponent {
                 spacing: 2
 
                 StyledText {
+                    visible: root.showHours
+                    text: root.hours.toFixed(1) + " hours"
+                    color: Theme.surfaceText
+                }
+
+                StyledText {
                     visible: root.showDays
                     text: root.days.toFixed(1) + " days"
                     color: Theme.surfaceText
@@ -283,12 +289,6 @@ DesktopPluginComponent {
                 StyledText {
                     visible: root.showWeeks
                     text: root.weeks.toFixed(1) + " weeks"
-                    color: Theme.surfaceText
-                }
-
-                StyledText {
-                    visible: root.showHours
-                    text: root.hours.toFixed(1) + " hours"
                     color: Theme.surfaceText
                 }
             }
