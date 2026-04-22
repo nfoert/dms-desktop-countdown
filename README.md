@@ -8,5 +8,5 @@ A simple plugin for Dank Material Shell that lets you create desktop widget coun
 - Only count certain days of the week, like how many mondays until the end date
 
 ## To-Do:
-- [ ] Show the date that the countdown is counting to
-- [ ] Add icons
+- [x] Show the date that the countdown is counting to
+- [x] Add icons

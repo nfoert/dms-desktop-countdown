@@ -8,8 +8,8 @@ import Quickshell
 DesktopPluginComponent {
     id: root
 
-    minWidth: 180
-    minHeight: 120
+    minWidth: 200
+    minHeight: 140
 
     property bool initalized: false
 
@@ -103,6 +103,28 @@ DesktopPluginComponent {
     function anyDayFilterEnabled() {
         return root.countMondays || root.countTuesdays || root.countWednesdays ||
                root.countThursdays || root.countFridays || root.countSaturdays || root.countSundays;
+    }
+
+    /*
+    Formats a date in a human-readable format
+
+    Parameters:
+        date: The date string to format
+
+    Returns:
+        The formatted date
+    */
+    function prettyDate(string) {
+        const date = parseDate(string);
+
+        return date.toLocaleDateString("en-US", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric"
+        });
     }
 
     /*
@@ -243,6 +265,36 @@ DesktopPluginComponent {
                 color: Theme.surfaceText
             }
 
+            // Dates
+            Row {
+                spacing: 4
+                width: parent.width
+
+                DankIcon {
+                    name: "calendar_today"
+                    size: Theme.iconSize / 2
+                    opacity: 0.5
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                StyledText {
+                    text: prettyDate(root.ssurfaceTexttartDate) + " -"
+                    font.pixelSize: Theme.fontSizeSmall
+                    color: Theme.surfaceText
+                    opacity: 0.5
+                    visible: root.startDate !== ""
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                StyledText {
+                    text: prettyDate(root.endDate)
+                    font.pixelSize: Theme.fontSizeSmall
+                    color: Theme.surfaceText
+                    opacity: 0.5
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
             // Progress bar (only if start date exists)
             Row {
                 visible: root.startDate !== "" && !root.invalidStartDate
@@ -254,6 +306,7 @@ DesktopPluginComponent {
                     radius: 3
                     width: parent.width - progressText.width - 6
                     color: Theme.surfaceVariant
+                    anchors.verticalCenter: parent.verticalCenter
 
                     Rectangle {
                         height: parent.height
@@ -268,28 +321,67 @@ DesktopPluginComponent {
                     text: (root.progress * 100).toFixed(2) + "%"
                     color: Theme.surfaceText
                     font.pixelSize: Theme.fontSizeSmall
+                    anchors.verticalCenter: parent.verticalCenter
                 }
             }
 
             Column {
+                width: parent.width
                 spacing: 2
 
-                StyledText {
+
+                Row {
+                    spacing: 4
+                    width: parent.width
                     visible: root.showHours
-                    text: root.hours.toFixed(1) + " hours"
-                    color: Theme.surfaceText
+
+                    DankIcon {
+                        name: "access_time"
+                        size: Theme.iconSize / 2
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    StyledText {
+                        text: root.hours.toFixed(1) + " hours"
+                        color: Theme.surfaceText
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
 
-                StyledText {
+                Row {
+                    spacing: 4
+                    width: parent.width
                     visible: root.showDays
-                    text: root.days.toFixed(1) + " days"
-                    color: Theme.surfaceText
-                }
 
-                StyledText {
+                    DankIcon {
+                        name: "calendar_view_day"
+                        size: Theme.iconSize / 2
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    StyledText {
+                        text: root.days.toFixed(1) + " days"
+                        color: Theme.surfaceText
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+                
+                Row {
+                    spacing: 4
+                    width: parent.width
                     visible: root.showWeeks
-                    text: root.weeks.toFixed(1) + " weeks"
-                    color: Theme.surfaceText
+
+                    DankIcon {
+                        name: "calendar_view_week"
+                        size: Theme.iconSize / 2
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    StyledText {
+                        text: root.weeks.toFixed(1) + " weeks"
+                        color: Theme.surfaceText
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
             }
 
