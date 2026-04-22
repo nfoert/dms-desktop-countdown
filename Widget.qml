@@ -171,7 +171,7 @@ DesktopPluginComponent {
         onDateChanged: root.update()
     }
 
-    Component.onCompleted: update()
+    DesktopPluginComponent.onCompleted: update()
 
     Rectangle {
         anchors.fill: parent
