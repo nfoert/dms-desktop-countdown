@@ -1,8 +1,8 @@
 {
   "id": "dmsDesktopCountdown",
   "name": "DMS Desktop Countdown",
-  "description": "A desktop widget for showing the amount of time until a significant date",
-  "version": "0.0.1",
+  "description": "A simple plugin for Dank Material Shell that lets you create desktop widget countdowns",
+  "version": "1.0.0",
   "author": "nfoert",
   "type": "desktop",
   "license": "GPL-3.0",
