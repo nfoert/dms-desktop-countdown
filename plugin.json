@@ -1,0 +1,14 @@
+{
+  "id": "dmsDesktopCountdown",
+  "name": "DMS Desktop Countdown",
+  "description": "A desktop widget for showing the amount of time until a significant date",
+  "version": "0.0.1",
+  "author": "nfoert",
+  "type": "desktop",
+  "license": "GPL-3.0",
+  "component": "./Widget.qml",
+  "icon": "widgets",
+  "settings": "./Settings.qml",
+  "requires_dms": ">=1.2.0",
+  "permissions": ["settings_read", "settings_write"]
+}
