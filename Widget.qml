@@ -290,7 +290,7 @@ DesktopPluginComponent {
                 }
 
                 StyledText {
-                    text: prettyDate(root.ssurfaceTexttartDate) + " -"
+                    text: prettyDate(root.startDate) + " -"
                     font.pixelSize: Theme.fontSizeSmall
                     color: Theme.surfaceText
                     opacity: 0.5
