@@ -170,14 +170,25 @@ DesktopPluginComponent {
         }
     }
 
-    // Update the values every second
+    // Update the values once the widget is loaded
+    Timer {
+        interval: 0
+        running: true
+        repeat: false
+        onTriggered: root.update()
+    }
+
+    // Then, update the values every minute
     SystemClock {
         id: clock
         precision: SystemClock.Minutes
         onDateChanged: root.update()
     }
 
-    DesktopPluginComponent.onCompleted: update()
+    // Update the values when settings change
+    onLabelChanged: update()
+    onStartDateChanged: update()
+    onEndDateChanged: update()
 
     Rectangle {
         anchors.fill: parent
