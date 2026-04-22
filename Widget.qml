@@ -29,9 +29,9 @@ DesktopPluginComponent {
     property real bgOpacity: (pluginData.backgroundOpacity ?? 80) / 100
 
     // Computed values
-    property int days: 0
-    property int weeks: 0
-    property int hours: 0
+    property real days: 0
+    property real weeks: 0
+    property real hours: 0
     property real progress: 0
 
     /*
@@ -100,61 +100,6 @@ DesktopPluginComponent {
     }
 
     /*
-    Counts the number of filtered days between two dates. If any day filter is enabled, only days that match the filter will be counted
-
-    Parameters:
-        from: The start date
-        to: The end date
-
-    Returns:
-        The number of filtered days
-    */
-    function countFilteredDays(from, to) {
-        let count = 0;
-
-        let current = new Date(from.getFullYear(), from.getMonth(), from.getDate());
-
-        while (current <= to) {
-            if (shouldCountDay(current.getDay()))
-                count++;
-
-            current.setDate(current.getDate() + 1);
-        }
-
-        return count;
-    }
-
-    /*
-    Counts the number of filtered hours between two dates. If any day filter is enabled, only hours that match the filter will be counted
-
-    Parameters:
-        from: The start date
-        to: The end date
-
-    Returns:
-        The number of filtered hours
-
-    */
-    function countFilteredHours(from, to) {
-        let totalHours = 0;
-
-        let current = new Date(from);
-
-        while (current < to) {
-            let next = new Date(current);
-            next.setHours(current.getHours() + 1);
-
-            if (shouldCountDay(current.getDay())) {
-                totalHours++;
-            }
-
-            current = next;
-        }
-
-        return totalHours;
-    }
-
-    /*
     Counts the number of milliseconds between two dates. If any day filter is enabled, only hours that match the filter will be counted
 
     Parameters:
@@ -164,7 +109,7 @@ DesktopPluginComponent {
     Returns:
         The number of milliseconds
     */
-    function countFilteredRange(from, to) {
+    function countFilteredMs(from, to) {
         if (!anyDayFilterEnabled()) {
             return to - from;
         }
@@ -176,8 +121,12 @@ DesktopPluginComponent {
             let next = new Date(current);
             next.setHours(current.getHours() + 1);
 
+            // Clamp to end
+            if (next > to)
+                next = new Date(to);
+
             if (shouldCountDay(current.getDay())) {
-                total += (next - current); // add 1 hour in ms
+                total += (next - current); // partial hour included
             }
 
             current = next;
@@ -196,30 +145,16 @@ DesktopPluginComponent {
 
         if (!end) return;
 
-        // Days and weeks
-        if (anyDayFilterEnabled()) {
-            root.days = Math.max(0, countFilteredDays(now, end));
-            root.weeks = root.days / 7
-            root.hours = countFilteredHours(now, end);
-        } else {
-            const diffMs = end - now;
+        const filteredMs = countFilteredMs(now, end);
 
-            root.days = diffMs / (1000 * 60 * 60 * 24);
-            root.weeks = root.days / 7;
-            root.hours = diffMs / (1000 * 60 * 60);
-        }
+        root.hours = Math.max(0, filteredMs / (1000 * 60 * 60));
+        root.days  = root.hours / 24;
+        root.weeks = root.days / 7;
 
-        // Progress bar
+        // Progress
         if (start) {
-            let total, elapsed;
-
-            if (anyDayFilterEnabled()) {
-                total = countFilteredRange(start, end);
-                elapsed = countFilteredRange(start, now);
-            } else {
-                total = end - start;
-                elapsed = now - start;
-            }
+            const total = countFilteredMs(start, end);
+            const elapsed = countFilteredMs(start, now);
 
             root.progress = total > 0
                 ? Math.min(1, Math.max(0, elapsed / total))
@@ -232,7 +167,7 @@ DesktopPluginComponent {
     // Update the values every second
     SystemClock {
         id: clock
-        precision: SystemClock.Seconds
+        precision: SystemClock.Minutes
         onDateChanged: root.update()
     }
 
@@ -301,7 +236,7 @@ DesktopPluginComponent {
 
                 StyledText {
                     visible: root.showHours
-                    text: root.hours + " hours"
+                    text: root.hours.toFixed(1) + " hours"
                     color: Theme.surfaceText
                 }
             }
