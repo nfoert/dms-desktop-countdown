@@ -234,6 +234,16 @@ DesktopPluginComponent {
     onLabelChanged: update()
     onStartDateChanged: update()
     onEndDateChanged: update()
+    onShowHoursChanged: update()
+    onShowDaysChanged: update()
+    onShowWeeksChanged: update()
+    onCountMondaysChanged: update()
+    onCountTuesdaysChanged: update()
+    onCountWednesdaysChanged: update()
+    onCountThursdaysChanged: update()
+    onCountFridaysChanged: update()
+    onCountSaturdaysChanged: update()
+    onCountSundaysChanged: update()
 
     Rectangle {
         anchors.fill: parent
