@@ -34,6 +34,15 @@ DesktopPluginComponent {
     property int hours: 0
     property real progress: 0
 
+    /*
+    Parses a date string in the format "YYYY-MM-DD HH:mm:ss"
+
+    Parameters:
+        str: The date string to parse
+
+    Returns:
+        The parsed Date object, or null if the string is invalid
+    */
     function parseDate(str) {
         if (!str) return null;
 
@@ -58,6 +67,15 @@ DesktopPluginComponent {
         return new Date(y, m, d, h, min, s);
     }
 
+    /*
+    Checks if a day should be counted based on the enabled days to count
+
+    Parameters:
+        day: The day to check (0-6)
+
+    Returns:
+        True if the day should be counted, false otherwise
+    */
     function shouldCountDay(day) {
         return (
             (day === 1 && root.countMondays) ||
@@ -70,11 +88,27 @@ DesktopPluginComponent {
         );
     }
 
+    /*
+    Checks if any day filter is enabled
+
+    Returns:
+        True if any day filter is enabled, false otherwise
+    */
     function anyDayFilterEnabled() {
         return root.countMondays || root.countTuesdays || root.countWednesdays ||
                root.countThursdays || root.countFridays || root.countSaturdays || root.countSundays;
     }
 
+    /*
+    Counts the number of filtered days between two dates. If any day filter is enabled, only days that match the filter will be counted
+
+    Parameters:
+        from: The start date
+        to: The end date
+
+    Returns:
+        The number of filtered days
+    */
     function countFilteredDays(from, to) {
         let count = 0;
 
@@ -90,6 +124,17 @@ DesktopPluginComponent {
         return count;
     }
 
+    /*
+    Counts the number of filtered hours between two dates. If any day filter is enabled, only hours that match the filter will be counted
+
+    Parameters:
+        from: The start date
+        to: The end date
+
+    Returns:
+        The number of filtered hours
+
+    */
     function countFilteredHours(from, to) {
         let totalHours = 0;
 
@@ -109,6 +154,16 @@ DesktopPluginComponent {
         return totalHours;
     }
 
+    /*
+    Counts the number of milliseconds between two dates. If any day filter is enabled, only hours that match the filter will be counted
+
+    Parameters:
+        from: The start date
+        to: The end date
+
+    Returns:
+        The number of milliseconds
+    */
     function countFilteredRange(from, to) {
         if (!anyDayFilterEnabled()) {
             return to - from;
@@ -131,6 +186,9 @@ DesktopPluginComponent {
         return total;
     }
 
+    /*
+    Updates the values for the widget
+    */
     function update() {
         const now = new Date();
         const end = parseDate(root.endDate);
@@ -171,6 +229,7 @@ DesktopPluginComponent {
         }
     }
 
+    // Update the values every second
     SystemClock {
         id: clock
         precision: SystemClock.Seconds
