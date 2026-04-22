@@ -2,6 +2,7 @@ import QtQuick
 import qs.Common
 import qs.Widgets
 import qs.Modules.Plugins
+import qs.Services
 import Quickshell
 
 DesktopPluginComponent {
@@ -9,6 +10,8 @@ DesktopPluginComponent {
 
     minWidth: 180
     minHeight: 120
+
+    property bool initalized: false
 
     property string label: pluginData.label ?? "Countdown"
     property string startDate: pluginData.startDate ?? ""
@@ -33,6 +36,9 @@ DesktopPluginComponent {
     property real weeks: 0
     property real hours: 0
     property real progress: 0
+
+    property bool invalidEndDate: false
+    property bool invalidStartDate: false
 
     /*
     Parses a date string in the format "YYYY-MM-DD HH:mm:ss"
@@ -149,7 +155,21 @@ DesktopPluginComponent {
         const end = parseDate(root.endDate);
         const start = parseDate(root.startDate);
 
-        if (!end) return;
+        if (root.initalized && end === null) {
+            root.invalidEndDate = true;
+            ToastService.showError("Invalid countdown end date", "The provided end date for countdown '" + root.label + "' is invalid.");
+            return;
+        } else {
+            root.invalidEndDate = false;
+        }
+
+        if (root.initalized && (start === null || start > end) && root.startDate !== "") {
+            root.invalidStartDate = true;
+            ToastService.showError("Invalid countdown start date", "The provided start date for countdown '" + root.label + "' is invalid.");
+            return;
+        } else {
+            root.invalidStartDate = false;
+        }
 
         const filteredMs = countFilteredMs(now, end);
 
@@ -175,7 +195,10 @@ DesktopPluginComponent {
         interval: 0
         running: true
         repeat: false
-        onTriggered: root.update()
+        onTriggered: {
+            initalized = true
+            root.update()
+        }
     }
 
     // Then, update the values every minute
@@ -198,7 +221,19 @@ DesktopPluginComponent {
         Column {
             anchors.fill: parent
             anchors.margins: 10
+
+            StyledText {
+                text: "Invalid end date"
+                color: Theme.error
+                visible: root.invalidEndDate
+            }
+        }
+
+        Column {
+            anchors.fill: parent
+            anchors.margins: 10
             spacing: 6
+            visible: !root.invalidEndDate
 
             // Label
             StyledText {
@@ -210,7 +245,7 @@ DesktopPluginComponent {
 
             // Progress bar (only if start date exists)
             Row {
-                visible: root.startDate !== ""
+                visible: root.startDate !== "" && !root.invalidStartDate
                 spacing: 6
                 width: parent.width
 
@@ -256,6 +291,12 @@ DesktopPluginComponent {
                     text: root.hours.toFixed(1) + " hours"
                     color: Theme.surfaceText
                 }
+            }
+
+            StyledText {
+                text: "Invalid start date"
+                color: Theme.error
+                visible: root.invalidStartDate
             }
         }
     }
