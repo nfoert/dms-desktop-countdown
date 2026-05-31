@@ -143,6 +143,9 @@ DesktopPluginComponent {
         if (!anyDayFilterEnabled()) {
             return to - from;
         }
+        if (to <= from) {
+            return 0;
+        }
 
         let total = 0;
 
@@ -195,7 +198,15 @@ DesktopPluginComponent {
             root.invalidStartDate = false;
         }
 
-        const filteredMs = countFilteredMs(now, end);
+        // Count from start if it's available, otherwise count from now
+        let countdownFrom;
+        if (start && now < start) {
+            countdownFrom = start;
+        } else {
+            countdownFrom = now;
+        }
+
+        const filteredMs = Math.max(0, countFilteredMs(countdownFrom, end));
 
         root.hours = Math.max(0, filteredMs / (1000 * 60 * 60));
         root.days  = root.hours / 24;
